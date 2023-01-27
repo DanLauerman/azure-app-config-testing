@@ -1,10 +1,16 @@
 FROM python:3.8-slim-buster
 
-WORKDIR .
+EXPOSE 5002
 
-COPY requirements.txt requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN adduser -u 5678 --disabled-password --gecos "" appuser
 
-COPY . .
+COPY requirements.txt .
+RUN python -m pip install --no-cache-dir -r requirements.txt
 
-CMD [ "python", "-m" , "main"]
+WORKDIR /app
+COPY . /app
+
+RUN chown -R appuser /app
+USER appuser
+
+CMD ["gunicorn", "--bind", "0.0.0.0:5002", "--timeout", "600", "--capture-output", "--enable-stdio-inheritance", "app:app"]
