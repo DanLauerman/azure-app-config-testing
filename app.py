@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, make_response
 from flask_restful import Api, Resource
 import json
+import os
 
 app = Flask(__name__)
 api = Api(app)
@@ -11,7 +12,7 @@ def home():
 
 class ConfigVal(Resource):
     def get(self):
-        return jsonify({'message': 'hello world'})
+        return jsonify({'message': os.getenv('CONFIG_VALUE_SAMPLE')})
 
 api.add_resource(ConfigVal, "/config_value")
 
